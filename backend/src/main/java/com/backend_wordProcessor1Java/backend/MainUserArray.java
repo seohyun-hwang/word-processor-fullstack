@@ -26,7 +26,7 @@ public class MainUserArray {
     }
 
     public Short getUndoCount() {
-        return undoCount;
+        return (Short) undoCount;
     }
     public void setUndoCount(short undoCount) {
         this.undoCount = undoCount;
@@ -39,7 +39,7 @@ public class MainUserArray {
         return modificationPositionStack.get(positionWithinStack);
     }
     public void setModificationPosition_ofStack(int positionWithinStack, int modificationPosition) {
-        modificationPositionStack.set(positionWithinStack, modificationPosition);
+        modificationPositionStack.set(positionWithinStack, (Integer) modificationPosition);
     }
 
     public List<String> getModificationTypeStack() {
@@ -59,7 +59,7 @@ public class MainUserArray {
         return copiedChars.get(positionWithinList);
     }
     public void addCopiedChar(char copiedChar) {
-        copiedChars.add(copiedChar);
+        copiedChars.add((Character) copiedChar);
     }
     public void clearCopiedChars() {
         copiedChars.clear();

@@ -4,6 +4,8 @@ import com.backend_wordProcessor1Java.backend.BackendApplication;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/text-control")
 @CrossOrigin("*")
@@ -15,20 +17,13 @@ public class TextController {
         BackendApplication.createNewElement_mainUserArray(1);
     }
 
-    @PutMapping("/deleteSelectedChars/user={userIndex}")
-    public static void deleteSelectedChars(@PathVariable("userIndex") Byte userIndex, int[] positionsOfDeletedChars) {
-        for (int i = 0; i < positionsOfDeletedChars.length; i++) {
-            BackendApplication.deleteChar(userIndex, positionsOfDeletedChars[i]);
-        }
+    @PutMapping("/deleteSelectedChars/user={userIndex}&podc={positionOfDeletedChar}")
+    public static void deleteSelectedChars(@PathVariable("userIndex") Byte userIndex, @PathVariable("positionOfDeletedChar") Integer positionOfDeletedChar) {
+        BackendApplication.deleteChar(userIndex, positionOfDeletedChar);
     }
-    @PostMapping("/insertChars/user={userIndex}&poi={positionOfInsertion}")
-    public static void insertChars(@PathVariable("userIndex") Byte userIndex, String[] insertedChars, @PathVariable("positionOfInsertion") Integer positionOfInsertion) {
-
-        char[] insertedChars_charType = BackendApplication.convertStringToChar_array(insertedChars);
-
-        for (int i = 0; i < insertedChars.length; i++) {
-            BackendApplication.insertChar(userIndex, insertedChars_charType[i], positionOfInsertion);
-        }
+    @PostMapping("/insertChar/user={userIndex}&poi={positionOfInsertion}$insChar={insertedChar}&cfop={doesCharFlowOffPage}")
+    public static void insertChar(@PathVariable("userIndex") Byte userIndex, @PathVariable("insertedChar") String insertedChar, @PathVariable("positionOfInsertion") Integer positionOfInsertion, @PathVariable("doesCharFlowOffPage") Boolean doesCharFlowOffPage) {
+        BackendApplication.insertChar(userIndex, insertedChar.charAt(0), positionOfInsertion, doesCharFlowOffPage);
     }
     @PutMapping("/undo_aModification/user={userIndex}")
     public static void undo_aModification(@PathVariable("userIndex") Byte userIndex) {
@@ -43,9 +38,9 @@ public class TextController {
     public static void copySelectedChars(@PathVariable("userIndex") Byte userIndex, int[] positionsOfCopiedChars) {
         BackendApplication.copySelectedChars(userIndex, positionsOfCopiedChars);
     }
-    @PutMapping("/pasteCopiedChars/user={userIndex}&poi={positionOfInsertion}")
-    public static void pasteCopiedChars(@PathVariable("userIndex") Byte userIndex, @PathVariable("positionOfInsertion") Integer positionOfInsertion) {
-        BackendApplication.pasteCopiedChars(userIndex, positionOfInsertion);
+    @GetMapping("/getCopiedChars/user={userIndex}")
+    public static List<Character> getCopiedCharsList(@PathVariable("userIndex") Byte userIndex) {
+        return BackendApplication.mainUserArray.get(userIndex).getCopiedCharsList();
     }
 
 
@@ -117,5 +112,10 @@ public class TextController {
     @GetMapping("/getAppliedHighlightColor/mcai={mainCharArrayIndex}")
     public static String getAppliedHighlightColor(@PathVariable("mainCharArrayIndex") Integer mainCharArrayIndex) {
         return BackendApplication.mainCharArray.get(mainCharArrayIndex).getAppliedHighlightColor();
+    }
+
+    @GetMapping("/get/mcai={mainCharArrayIndex}")
+    public static boolean getIsLastChar_ofLine(@PathVariable("mainCharArrayIndex") Integer mainCharArrayIndex) {
+        return BackendApplication.mainCharArray.get(mainCharArrayIndex).getIsLastChar_ofLine();
     }
 }

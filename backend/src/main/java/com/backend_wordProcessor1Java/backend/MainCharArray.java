@@ -10,11 +10,12 @@ public class MainCharArray {
     private String appliedTypeface;
     private Integer leftward_ilili; // "ilili" = "inLinkedList"
     private Integer rightward_ilili;
+    private Boolean isLastChar_ofLine;
 
     public MainCharArray(
             Character characterInFocus,
             Byte appliedBolding, Byte appliedItalic, Byte appliedUnderline, String appliedTextColor, String appliedHighlightColor, String appliedTypeface,
-            Integer leftward_ilili, Integer rightward_ilili)
+            Integer leftward_ilili, Integer rightward_ilili, Boolean isLastChar_ofLine)
     {
         this.characterInFocus = characterInFocus;
         this.appliedBolding = appliedBolding;
@@ -25,6 +26,7 @@ public class MainCharArray {
         this.appliedTypeface = appliedTypeface;
         this.leftward_ilili = leftward_ilili;
         this.rightward_ilili = rightward_ilili;
+        this.isLastChar_ofLine = isLastChar_ofLine;
     }
 
     // Getters/Setters
@@ -89,5 +91,12 @@ public class MainCharArray {
     }
     public void setRightward_ilili(Integer rightward_ilili) {
         this.rightward_ilili = rightward_ilili;
+    }
+
+    public Boolean getIsLastChar_ofLine() {
+        return isLastChar_ofLine;
+    }
+    public void setIsLastChar_ofLine(Boolean isLastChar_ofLine) {
+        this.isLastChar_ofLine = isLastChar_ofLine;
     }
 }

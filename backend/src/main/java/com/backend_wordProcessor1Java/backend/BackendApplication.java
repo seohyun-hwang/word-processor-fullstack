@@ -10,14 +10,15 @@ import java.util.List;
 public class BackendApplication {
 
 	public static List<MainCharArray> mainCharArray = new ArrayList<>(); // dumpster fire of characters
-	static final int positionOfHead = 0; // head of DoublyLinkedList; reference to mainArray
-	static final int positionOfTail = 1; // tail of DoublyLinkedList
+	static final Integer positionOfHead = 0; // head of DoublyLinkedList; reference to mainArray
+	static final Integer positionOfTail = 1; // tail of DoublyLinkedList
+
 	public static List<MainUserArray> mainUserArray = new ArrayList<>(); // dumpster fire of users
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);
 
-		createNewElement_mainUserArray(1); // a userbase of 1 to start with
+		createNewElement_mainUserArray(1); // a starting userbase of 1
 
 		// Setup: DoublyLinkedList head & tail
 		createNewElement_mainCharArray(2);
@@ -27,13 +28,32 @@ public class BackendApplication {
 
 
 	// insert/delete/style/color
-	public static void insertChar(byte userIndex, char insertedChar, int positionOfInsertion) {
+	public static void insertChar(byte userIndex, Character insertedChar, Integer positionOfInsertion, boolean doesCharFlowOffPage) {
 		print("inserting a character to the LEFT of the position-of-insertion.", true);
 
 		createNewElement_mainCharArray(1);
-		int positionOfInsertedChar = mainCharArray.size() - 1;
+		Integer positionOfInsertedChar = mainCharArray.size() - 1;
 		mainCharArray.get(positionOfInsertedChar).setCharacterInFocus(insertedChar);
 
+		int positionOfLatestWhitespace_ofLine = -1;
+
+		if (doesCharFlowOffPage) {
+			for (int i = positionOfInsertedChar; i > 0 ; i = mainCharArray.get(i).getLeftward_ilili()) {
+				char charInFocus = mainCharArray.get(i).getCharacterInFocus();
+				if (mainCharArray.get(i).getIsLastChar_ofLine() == Boolean.TRUE && i < positionOfLatestWhitespace_ofLine) {
+					mainCharArray.get(i).setIsLastChar_ofLine(Boolean.FALSE);
+					break;
+				}
+				if (charInFocus == ' ') {
+					mainCharArray.get(i).setIsLastChar_ofLine(Boolean.TRUE);
+					positionOfLatestWhitespace_ofLine = i;
+				}
+			}
+			mainCharArray.get(positionOfInsertedChar).setIsLastChar_ofLine(Boolean.TRUE);
+		}
+		if (insertedChar == '\n') {
+			mainCharArray.get(positionOfInsertion).setIsLastChar_ofLine(Boolean.TRUE);
+		}
 		if (mainCharArray.get(positionOfInsertion).getLeftward_ilili() == positionOfHead) {
 			pairPointers(positionOfHead, positionOfInsertedChar);
 			if (positionOfInsertion != positionOfTail) {
@@ -52,7 +72,7 @@ public class BackendApplication {
 		modificationTrackingContribution(userIndex, positionOfInsertedChar, "insert");
 		print("insertion successful.", true);
 	}
-	public static void deleteChar(byte userIndex, int positionOfDeletedElement) {
+	public static void deleteChar(byte userIndex, Integer positionOfDeletedElement) {
 		print("deleting a character AT the position-of-deletion.", true);
 		if (positionOfDeletedElement != positionOfHead) {
 			if (mainCharArray.get(positionOfDeletedElement).getLeftward_ilili() == positionOfHead) {
@@ -65,17 +85,17 @@ public class BackendApplication {
 		}
 		print("deletion successful.", true);
 	}
-	public static void reStyleSelectedChar_bold(int positionOfSelectedChar, byte appliedBolding) {
+	public static void reStyleSelectedChar_bold(int positionOfSelectedChar, Byte appliedBolding) {
 		print("updating the bolding style at the position-of-selected.", true);
 		mainCharArray.get(positionOfSelectedChar).setAppliedBolding(appliedBolding);
 		print("bold-style-update successful.", true);
 	}
-	public static void reStyleSelectedChar_italic(int positionOfSelectedChar, byte appliedItalic) {
+	public static void reStyleSelectedChar_italic(int positionOfSelectedChar, Byte appliedItalic) {
 		print("updating the italic style at the position-of-selected.", true);
 		mainCharArray.get(positionOfSelectedChar).setAppliedItalic(appliedItalic);
 		print("italic-style-update successful.", true);
 	}
-	public static void reStyleSelectedChar_underline(int positionOfSelectedChar, byte appliedUnderline) {
+	public static void reStyleSelectedChar_underline(int positionOfSelectedChar, Byte appliedUnderline) {
 		print("updating the underline style at the position-of-selected.", true);
 		mainCharArray.get(positionOfSelectedChar).setAppliedUnderline(appliedUnderline);
 		print("underline-style-update successful.", true);
@@ -106,13 +126,6 @@ public class BackendApplication {
 		}
 		print("copying successful for user #" + userIndex + ".", true);
 	}
-	public static void pasteCopiedChars(byte userIndex, int positionOfInsertion) {
-		print("pasting all the copied characters from the clipboard for user #" + userIndex + ".", true);
-		for (int i = 0; i < mainUserArray.get(userIndex).getCopiedCharsList().size(); i++) {
-			insertChar(userIndex, mainUserArray.get(userIndex).getCopiedChar(i), positionOfInsertion);
-		}
-		print("pasting successful for user #" + userIndex + ".", true);
-	}
 	public static void undo_aModification(byte userIndex) {
 		print("undoing a modification.", true);
 		if (!mainUserArray.get(userIndex).getModificationTypeStack().isEmpty() && (mainUserArray.get(userIndex).getModificationTypeStack().size() - mainUserArray.get(userIndex).getUndoCount()) > 0 && mainCharArray.size() > 2) {
@@ -124,7 +137,7 @@ public class BackendApplication {
 				short undoCount = mainUserArray.get(userIndex).getUndoCount();
 
 				String typeOfUndoneModification = mainUserArray.get(userIndex).getModificationType_ofStack(positionOf_latestModification - undoCount);
-				int positionOfUndoneModification = mainUserArray.get(userIndex).getModificationPosition_ofStack(positionOf_latestModification - undoCount);
+				Integer positionOfUndoneModification = mainUserArray.get(userIndex).getModificationPosition_ofStack(positionOf_latestModification - undoCount);
 				if (typeOfUndoneModification.equalsIgnoreCase("insert")) {
 					if (mainCharArray.get(positionOfUndoneModification).getLeftward_ilili() == positionOfHead) {
 						pairPointers(positionOfHead, mainCharArray.get(positionOfUndoneModification).getRightward_ilili());
@@ -160,7 +173,7 @@ public class BackendApplication {
 
 			int positionOf_latestModification = mainUserArray.get(userIndex).getModificationTypeStack().size() - 1;
 			String typeOfUndoneModification = mainUserArray.get(userIndex).getModificationType_ofStack(positionOf_latestModification - undoCount);
-			int positionOfUndoneModification = mainUserArray.get(userIndex).getModificationPosition_ofStack(positionOf_latestModification - undoCount);
+			Integer positionOfUndoneModification = mainUserArray.get(userIndex).getModificationPosition_ofStack(positionOf_latestModification - undoCount);
 			if (typeOfUndoneModification.equalsIgnoreCase("insert")) {
 				mainCharArray.get(
 						mainCharArray.get(positionOfUndoneModification).getRightward_ilili()
@@ -201,7 +214,7 @@ public class BackendApplication {
 	public static void createNewElement_mainCharArray(int count) {
 		// creating with all values null
 		for (int i = 0; i < count; i++) {
-			mainCharArray.add(new MainCharArray(null, null, null,null, null, null, null, null, null));
+			mainCharArray.add(new MainCharArray(null, null, null,null, null, null, null, null, null, null));
 		}
 	}
 	public static void createNewElement_mainUserArray(int count) {
@@ -227,13 +240,13 @@ public class BackendApplication {
 			print("clearance successful.", true);
 		}
 	}
-	public static void modificationTrackingContribution(byte userIndex, int positionOfTargetedElement, String typeOf_latestModification) {
+	public static void modificationTrackingContribution(byte userIndex, Integer positionOfTargetedElement, String typeOf_latestModification) {
 		print("making a new entry into the modification-tracking.", true);
 		mainUserArray.get(userIndex).getModificationPositionStack().add(positionOfTargetedElement);
 		mainUserArray.get(userIndex).getModificationTypeStack().add(typeOf_latestModification);
 		print("modification-tracking successful.", true);
 	}
-	public static void pairPointers(int leftPart, int rightPart) {
+	public static void pairPointers(Integer leftPart, Integer rightPart) {
 		print("pairing pointers of two elements.", true);
 		mainCharArray.get(leftPart).setRightward_ilili(rightPart);
 		mainCharArray.get(rightPart).setLeftward_ilili(leftPart);
@@ -245,5 +258,30 @@ public class BackendApplication {
 			charArray[i] = stringArray[i].charAt(0);
 		}
 		return charArray;
+	}
+	public static int positionOfTargetValue_byBinarySearch(int inputValue, List<Integer> targetList, byte precision) {
+		int max = targetList.size() - 1;
+		int min = 0;
+		while (true) {
+			if (targetList.get((max - min) / 2) > inputValue) {
+				int tempMax = ((max - min) / 2) + ((max - min) / 4);
+				if (tempMax == max && precision == 1) {
+					return max;
+				}
+				max = tempMax;
+			} else if (targetList.get((max - min) / 2) < inputValue) {
+				int tempMin = (max - min) / 4;
+				if (tempMin == min && precision == - 1) {
+					return min;
+				}
+				min = tempMin;
+			} else if (targetList.get((max - min) / 2) == inputValue && precision == 0) {
+				return targetList.get(inputValue);
+			} else {
+				print("error", true);
+				return -1;
+			}
+		}
+
 	}
 }

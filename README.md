@@ -1,6 +1,8 @@
 PROJECT STILL IN PROGRESS!<br>
 <b>Description:</b> A fullstack development of a word processor.
 
+Intended features: character insertion/deletion, undo/redo, copy/paste, word-wrap
+
 Backend: Java 24, Springboot (Project: Maven)<br>
 Frontend: TypeScript, ReactJS/Vite
 
