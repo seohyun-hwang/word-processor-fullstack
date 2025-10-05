@@ -12,6 +12,9 @@ public class BackendApplication {
 	public static List<MainCharArray> mainCharArray = new ArrayList<>(); // dumpster fire of characters
 	static final Integer positionOfHead = 0; // head of DoublyLinkedList; reference to mainArray
 	static final Integer positionOfTail = 1; // tail of DoublyLinkedList
+	public static List<Short> lineWidthPx = new ArrayList<>();
+	static short lineWidthPxMax = 512; // 2^9
+
 
 	public static List<MainUserArray> mainUserArray = new ArrayList<>(); // dumpster fire of users
 
@@ -24,36 +27,20 @@ public class BackendApplication {
 		createNewElement_mainCharArray(2);
 		mainCharArray.get(positionOfHead).setRightward_ilili(positionOfTail);
 		mainCharArray.get(positionOfTail).setLeftward_ilili(positionOfHead);
+		lineWidthPx.add((short) 0);
 	}
 
 
 	// insert/delete/style/color
-	public static void insertChar(byte userIndex, Character insertedChar, Integer positionOfInsertion, boolean doesCharFlowOffPage) {
+	public static void insertChar(byte userIndex, Character insertedChar, Integer positionOfInsertion, Byte charWidthPx, Byte charHeightPx) {
 		print("inserting a character to the LEFT of the position-of-insertion.", true);
 
 		createNewElement_mainCharArray(1);
 		Integer positionOfInsertedChar = mainCharArray.size() - 1;
 		mainCharArray.get(positionOfInsertedChar).setCharacterInFocus(insertedChar);
+		mainCharArray.get(positionOfInsertedChar).setCharWidthPxDefault(charWidthPx);
+		mainCharArray.get(positionOfInsertedChar).setCharHeightPx(charHeightPx);
 
-		int positionOfLatestWhitespace_ofLine = -1;
-
-		if (doesCharFlowOffPage) {
-			for (int i = positionOfInsertedChar; i > 0 ; i = mainCharArray.get(i).getLeftward_ilili()) {
-				char charInFocus = mainCharArray.get(i).getCharacterInFocus();
-				if (mainCharArray.get(i).getIsLastChar_ofLine() == Boolean.TRUE && i < positionOfLatestWhitespace_ofLine) {
-					mainCharArray.get(i).setIsLastChar_ofLine(Boolean.FALSE);
-					break;
-				}
-				if (charInFocus == ' ') {
-					mainCharArray.get(i).setIsLastChar_ofLine(Boolean.TRUE);
-					positionOfLatestWhitespace_ofLine = i;
-				}
-			}
-			mainCharArray.get(positionOfInsertedChar).setIsLastChar_ofLine(Boolean.TRUE);
-		}
-		if (insertedChar == '\n') {
-			mainCharArray.get(positionOfInsertion).setIsLastChar_ofLine(Boolean.TRUE);
-		}
 		if (mainCharArray.get(positionOfInsertion).getLeftward_ilili() == positionOfHead) {
 			pairPointers(positionOfHead, positionOfInsertedChar);
 			if (positionOfInsertion != positionOfTail) {
@@ -68,22 +55,56 @@ public class BackendApplication {
 				pairPointers(positionOfInsertedChar, positionOfInsertion);
 			}
 		}
+
+		for (int positionOf_charInFocus = positionOfInsertedChar; positionOf_charInFocus != 1; positionOf_charInFocus = mainCharArray.get(positionOf_charInFocus).getRightward_ilili()) {
+			insertCharGraphically(positionOf_charInFocus);
+		}
 		modificationTrackingClearance(userIndex);
 		modificationTrackingContribution(userIndex, positionOfInsertedChar, "insert");
 		print("insertion successful.", true);
 	}
-	public static void deleteChar(byte userIndex, Integer positionOfDeletedElement) {
+	public static void deleteChar(byte userIndex, Integer positionOfDeletedChar) {
 		print("deleting a character AT the position-of-deletion.", true);
-		if (positionOfDeletedElement != positionOfHead) {
-			if (mainCharArray.get(positionOfDeletedElement).getLeftward_ilili() == positionOfHead) {
-				pairPointers(positionOfHead, mainCharArray.get(positionOfDeletedElement).getRightward_ilili());
+		if (positionOfDeletedChar != positionOfHead) {
+			if (mainCharArray.get(positionOfDeletedChar).getLeftward_ilili() == positionOfHead) {
+				pairPointers(positionOfHead, mainCharArray.get(positionOfDeletedChar).getRightward_ilili());
 			} else {
-				pairPointers(mainCharArray.get(positionOfDeletedElement).getLeftward_ilili(), mainCharArray.get(positionOfDeletedElement).getRightward_ilili());
+				pairPointers(mainCharArray.get(positionOfDeletedChar).getLeftward_ilili(), mainCharArray.get(positionOfDeletedChar).getRightward_ilili());
+			}
+
+			for (int positionOf_charInFocus = mainCharArray.get(positionOfDeletedChar).getLeftward_ilili(); positionOf_charInFocus != 1; positionOf_charInFocus = mainCharArray.get(positionOf_charInFocus).getRightward_ilili()) {
+				insertCharGraphically(positionOf_charInFocus);
 			}
 			modificationTrackingClearance(userIndex);
-			modificationTrackingContribution(userIndex, positionOfDeletedElement, "delete");
+			modificationTrackingContribution(userIndex, positionOfDeletedChar, "delete");
 		}
 		print("deletion successful.", true);
+	}
+	public static void insertCharGraphically(int positionOf_charInFocus) {
+		byte charWidthPx = mainCharArray.get(positionOf_charInFocus).getCharWidthPxDefault();
+		byte charHeightPx = mainCharArray.get(positionOf_charInFocus).getCharHeightPx();
+		short appliedCharWidthPx = (short) (charWidthPx * charHeightPx);
+
+		if (mainCharArray.get(mainCharArray.get(positionOf_charInFocus).getLeftward_ilili()).getCharacterInFocus() == '\n') {
+			mainCharArray.get(positionOf_charInFocus).setLineIndex((short) (mainCharArray.get(mainCharArray.get(positionOf_charInFocus).getLeftward_ilili()).getLineIndex() - 1));
+			return;
+		}
+		while (mainCharArray.get(positionOf_charInFocus).getCharacterInFocus() == ' ') {
+			positionOf_charInFocus = mainCharArray.get(positionOf_charInFocus).getRightward_ilili();
+		}
+		if (mainCharArray.get(positionOf_charInFocus).getLineIndex() == (short) (mainCharArray.get(mainCharArray.get(positionOf_charInFocus).getLeftward_ilili()).getLineIndex() - 1)) {
+			return;
+		}
+		if (lineWidthPx.get(lineWidthPx.get((short)(mainCharArray.get(positionOf_charInFocus).getLineIndex() + 1))) != null) {
+			lineWidthPx.add((short) 0);
+		}
+		if (lineWidthPx.get(mainCharArray.get(positionOf_charInFocus).getLineIndex()) + appliedCharWidthPx > lineWidthPxMax) {
+			mainCharArray.get(positionOf_charInFocus).setLineIndex((short)(mainCharArray.get(positionOf_charInFocus).getLineIndex() + 1));
+			lineWidthPx.set(mainCharArray.get(positionOf_charInFocus).getLineIndex(), (short)(lineWidthPx.get((short)(mainCharArray.get(positionOf_charInFocus).getLineIndex() + 1)) + appliedCharWidthPx));
+		} else {
+			mainCharArray.get(positionOf_charInFocus).setLineIndex((mainCharArray.get(positionOf_charInFocus).getLineIndex()));
+			lineWidthPx.set(mainCharArray.get(positionOf_charInFocus).getLineIndex(), (short)(lineWidthPx.get(mainCharArray.get(positionOf_charInFocus).getLineIndex()) + appliedCharWidthPx));
+		}
 	}
 	public static void reStyleSelectedChar_bold(int positionOfSelectedChar, Byte appliedBolding) {
 		print("updating the bolding style at the position-of-selected.", true);
@@ -100,9 +121,15 @@ public class BackendApplication {
 		mainCharArray.get(positionOfSelectedChar).setAppliedUnderline(appliedUnderline);
 		print("underline-style-update successful.", true);
 	}
-	public static void reStyleSelectedChar_typeface(int positionOfSelectedChar, String appliedTypeface) {
+	public static void reStyleSelectedChar_typeface(int positionOfSelectedChar, String appliedTypeface, Byte charWidthPxDefault) {
 		print("updating the typeface at the position-of-selected.", true);
 		mainCharArray.get(positionOfSelectedChar).setAppliedTypeface(appliedTypeface);
+		mainCharArray.get(positionOfSelectedChar).setCharWidthPxDefault(charWidthPxDefault);
+		print("typeface-update successful.", true);
+	}
+	public static void reStyleSelectedChar_heightInPx(int positionOfSelectedChar, Byte appliedCharHeightPx) {
+		print("updating the typeface at the position-of-selected.", true);
+		mainCharArray.get(positionOfSelectedChar).setCharHeightPx(appliedCharHeightPx);
 		print("typeface-update successful.", true);
 	}
 	public static void reColorSelectedChar_text(int positionOfSelectedChar, String appliedTextColor) {
@@ -118,12 +145,14 @@ public class BackendApplication {
 
 
 	// copy/paste/undo/redo
-	public static void copySelectedChars(byte userIndex, int[] positionsOfCopiedChars) {
-		print("copying all the selected characters to the clipboard for user #" + userIndex + ".", true);
+	public static void clearCopiedCharStack(byte userIndex) {
+		print("clearing the clipboard for user #" + userIndex + ".", true);
 		mainUserArray.get(userIndex).clearCopiedChars();
-		for (int i = 0; i < positionsOfCopiedChars.length; i++) {
-			mainUserArray.get(userIndex).addCopiedChar(mainCharArray.get(positionsOfCopiedChars[i]).getCharacterInFocus());
-		}
+		print("clipboard clearance successful for user #" + userIndex + ".", true);
+	}
+	public static void addToCopiedCharStack(byte userIndex, int positionOfCopiedChar) {
+		print("adding a selected characters to the clipboard for user #" + userIndex + ".", true);
+		mainUserArray.get(userIndex).addCopiedChar(mainCharArray.get(positionOfCopiedChar).getCharacterInFocus());
 		print("copying successful for user #" + userIndex + ".", true);
 	}
 	public static void undo_aModification(byte userIndex) {
@@ -154,6 +183,9 @@ public class BackendApplication {
 					).setRightward_ilili(positionOfUndoneModification);
 				}
 				undoCount++;
+				for (int positionOf_charInFocus = mainCharArray.get(positionOfUndoneModification).getLeftward_ilili(); positionOf_charInFocus != 1; positionOf_charInFocus = mainCharArray.get(positionOf_charInFocus).getRightward_ilili()) {
+					insertCharGraphically(positionOf_charInFocus);
+				}
 				print("undo-count (after undo): " + undoCount, true);
 			} else {
 				print("reached the maximum undo-count.", true);
@@ -194,6 +226,9 @@ public class BackendApplication {
 							mainCharArray.get(positionOfUndoneModification).getRightward_ilili()
 					);
 				}
+				for (int positionOf_charInFocus = mainCharArray.get(positionOfUndoneModification).getLeftward_ilili(); positionOf_charInFocus != 1; positionOf_charInFocus = mainCharArray.get(positionOf_charInFocus).getRightward_ilili()) {
+					insertCharGraphically(positionOf_charInFocus);
+				}
 			}
 		} else {
 			print("nothing to redo.", true);
@@ -214,7 +249,7 @@ public class BackendApplication {
 	public static void createNewElement_mainCharArray(int count) {
 		// creating with all values null
 		for (int i = 0; i < count; i++) {
-			mainCharArray.add(new MainCharArray(null, null, null,null, null, null, null, null, null, null));
+			mainCharArray.add(new MainCharArray(null, null, null, null, null,null, null, null, null, null, null, null));
 		}
 	}
 	public static void createNewElement_mainUserArray(int count) {
@@ -252,6 +287,7 @@ public class BackendApplication {
 		mainCharArray.get(rightPart).setLeftward_ilili(leftPart);
 		print("pointer-pairing successful.", true);
 	}
+	/*
 	public static char[] convertStringToChar_array(String[] stringArray) {
 		char[] charArray = new char[stringArray.length];
 		for (int i = 0; i < stringArray.length; i++) {
@@ -282,6 +318,6 @@ public class BackendApplication {
 				return -1;
 			}
 		}
-
 	}
+	 */
 }

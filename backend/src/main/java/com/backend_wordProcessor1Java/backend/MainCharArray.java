@@ -10,12 +10,14 @@ public class MainCharArray {
     private String appliedTypeface;
     private Integer leftward_ilili; // "ilili" = "inLinkedList"
     private Integer rightward_ilili;
-    private Boolean isLastChar_ofLine;
+    private Short lineIndex;
+    private Byte charWidthPxDefault;
+    private Byte charHeightPx;
 
     public MainCharArray(
             Character characterInFocus,
             Byte appliedBolding, Byte appliedItalic, Byte appliedUnderline, String appliedTextColor, String appliedHighlightColor, String appliedTypeface,
-            Integer leftward_ilili, Integer rightward_ilili, Boolean isLastChar_ofLine)
+            Integer leftward_ilili, Integer rightward_ilili, Short lineIndex, Byte charWidthPxDefault, Byte charHeightPx)
     {
         this.characterInFocus = characterInFocus;
         this.appliedBolding = appliedBolding;
@@ -26,7 +28,9 @@ public class MainCharArray {
         this.appliedTypeface = appliedTypeface;
         this.leftward_ilili = leftward_ilili;
         this.rightward_ilili = rightward_ilili;
-        this.isLastChar_ofLine = isLastChar_ofLine;
+        this.lineIndex = lineIndex;
+        this.charWidthPxDefault = charWidthPxDefault;
+        this.charHeightPx = charHeightPx;
     }
 
     // Getters/Setters
@@ -93,10 +97,24 @@ public class MainCharArray {
         this.rightward_ilili = rightward_ilili;
     }
 
-    public Boolean getIsLastChar_ofLine() {
-        return isLastChar_ofLine;
+    public Short getLineIndex() {
+        return lineIndex;
     }
-    public void setIsLastChar_ofLine(Boolean isLastChar_ofLine) {
-        this.isLastChar_ofLine = isLastChar_ofLine;
+    public void setLineIndex(Short lineIndex) {
+        this.lineIndex = lineIndex;
+    }
+
+    public Byte getCharWidthPxDefault() {
+        return charWidthPxDefault;
+    }
+    public void setCharWidthPxDefault(Byte charWidthPxDefault) {
+        this.charWidthPxDefault = charWidthPxDefault;
+    }
+
+    public Byte getCharHeightPx() {
+        return charHeightPx;
+    }
+    public void setCharHeightPx(Byte charHeightPx) {
+        this.charHeightPx = charHeightPx;
     }
 }

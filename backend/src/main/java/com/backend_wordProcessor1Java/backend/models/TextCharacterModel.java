@@ -21,10 +21,14 @@ public class TextCharacterModel {
     private int position_ilili; // staring from 0, excl. head/tail; "ilili" = "inLinkedList"
 
     private Character characterInFocus;
-    private List<Byte> appliedStyleList;
+    private Byte appliedBolding;
+    private Byte appliedItalic;
+    private Byte appliedUnderline;
     private String appliedTextColor;
     private String appliedHighlightColor;
     private String appliedTypeface;
+    private Short lineIndex;
+    private Byte charWidthPx;
 
 
     // Getters/Setters (for ID)

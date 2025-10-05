@@ -18,7 +18,7 @@ public class TextCharacterService {
     }
     public MainCharArray getDatabaseDataById(int id) {
 
-        return new MainCharArray(null, null, null, null, null, null, null, null, null, null);
+        return new MainCharArray(null, null, null,  null, null, null, null, null, null, null, null, null);
     }
 
 

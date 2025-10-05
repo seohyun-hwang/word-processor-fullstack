@@ -10,7 +10,7 @@ public class MainUserArray {
 
     private List<Integer> modificationPositionStack;
     private List<String> modificationTypeStack;
-    private List<Character> copiedChars = new ArrayList<>();
+    private List<Character> copiedCharStack = new ArrayList<>();
 
     public MainUserArray(
             ArrayList<Integer> modificationPositionStack,
@@ -53,15 +53,15 @@ public class MainUserArray {
     }
 
     public List<Character> getCopiedCharsList() {
-        return copiedChars;
+        return copiedCharStack;
     }
     public Character getCopiedChar(int positionWithinList) {
-        return copiedChars.get(positionWithinList);
+        return copiedCharStack.get(positionWithinList);
     }
     public void addCopiedChar(char copiedChar) {
-        copiedChars.add((Character) copiedChar);
+        copiedCharStack.add(copiedChar);
     }
     public void clearCopiedChars() {
-        copiedChars.clear();
+        copiedCharStack.clear();
     }
 }
