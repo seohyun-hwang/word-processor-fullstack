@@ -1,2 +1,2 @@
-# Node Modules Dependency
-/frontend/node_modules
+# Node Modules Dependency (in case React is implemented)
+# /frontend/node_modules

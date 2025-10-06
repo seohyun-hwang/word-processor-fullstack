@@ -9,17 +9,13 @@ import java.util.List;
 
 @Service
 public class TextCharacterService {
+        @Autowired
+        private TextCharacterRepository textCharacterRepository;
 
-    @Autowired
-    private TextCharacterRepository textCharacterRepository;
+        public void save_mainArrayToDatabaseColumn(List<MainCharArray> mainCharArray) {
 
-    public void save_mainArrayToDatabaseColumn(List<MainCharArray> mainCharArray) {
-
-    }
-    public MainCharArray getDatabaseDataById(int id) {
-
-        return new MainCharArray(null, null, null,  null, null, null, null, null, null, null, null, null);
-    }
-
-
+        }
+        public MainCharArray getDatabaseDataById(int id) {
+                return new MainCharArray(null, null, null,  null, null, null, null, null, null, null, null, null);
+        }
 }
